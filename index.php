@@ -5,7 +5,6 @@
   $url = strpos($url, 'http://') !== false ? $url : 'http://' . $url;
   
   libxml_use_internal_errors(true);
-  $site = file_get_contents($url, false);
   
   $site = DOMDocument::loadHTMLFile($url);
 
