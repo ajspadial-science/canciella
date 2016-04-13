@@ -70,6 +70,14 @@
         }
       };
     });
+
+    $body = $dom->getElementsByTagName('body')->item(0);
+    $script_template = file_get_contents(__DIR__ . '/../templates/canciella.js');
+    $script_code = str_replace("{{base_url}}", $base_url, $script_template);
+    $script_code = str_replace("{{url}}", $url, $script_code);
+    $script = $dom->createElement('script', $script_code);
+    $script->setAttribute('type', 'application/javascript');
+    $body->appendChild($script);
     $output = $dom->saveHTML();
   }
   $full_type = $mime_type['full-type'];
