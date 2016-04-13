@@ -25,12 +25,40 @@
       'script' => 'src',
       'a'      => 'href',
       'img'    => 'src',
+      'meta'   => 'url',
     );
 
-    function appendProxy($value, $full = false) {
+    function appendProxy($href) {
         global $url, $base_url;
-        $value = $full ? $value : $url . $value;
-        return  "$base_url$value";
+        $parsed_href = parse_url($href);
+
+        if (isset($parsed_href['scheme']) && isset($parsed_href['host'])) {
+          // full html address
+          return "$base_url$href";
+        }
+        else {
+          $parsed_url = parse_url($url);
+          $scheme = $parsed_url['scheme'] . "://";
+          $host = $parsed_url['host'];
+          $port = isset($parsed_url['port']) ? ":" . $parsed_url['port'] : "";
+          $base = "$scheme$host$port/";
+
+          if (isset($parsed_url['path'])) {
+            $folder = strrpos($parsed_url['path'], '/') ? substr($parsed_url['path'], 0, strrpos($parsed_url['path'], '/')) : $parsed_url['path'];
+          }
+          else {
+            $folder = "/";
+          }
+          
+          if (strpos($href, "/") === 0) {
+            // absolute address in this domain
+            return "$base_url$base" . ltrim($href, "/");
+          }
+          else {
+            // relative address in this domain
+            return "$base_url$base$folder/$href";
+          }
+        }
     }
 
     array_walk($tags, function($attributeName, $tagName) use ($dom){
@@ -38,12 +66,11 @@
       foreach($t as $element) {
         $attr = $element->getAttribute($attributeName);
         if (!empty($attr)) {
-          $element->setAttribute($attributeName, appendProxy($attr, strpos($attr, 'http') === 0));
+          $element->setAttribute($attributeName, appendProxy($attr));
         }
       };
     });
     $output = $dom->saveHTML();
   }
   $full_type = $mime_type['full-type'];
-  header("Content-type: $full_type");
   echo $output;
