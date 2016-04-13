@@ -1,0 +1,21 @@
+{
+  "name": "Canciella",
+  "description": "A small reverse proxy",
+  "keywords": ["proxy", "reverse proxy"],
+  "license": "GPL",
+  "authors": [
+    {
+      "name": "Antonio Jesús Sánchez Padial",
+      "email": "antonio.sanchez@inia.es",
+      "role": "Creator / Main Developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Canciella\\": "src/"
+    }
+  }
+}
