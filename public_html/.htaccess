@@ -1,0 +1,7 @@
+DirectoryIndex index.html
+
+RewriteEngine on
+
+
+RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_URI} !-f
+RewriteRule .* index.php [QSA,L]

@@ -1,5 +1,5 @@
 <?php
-  include ('utilHTTP.php');
+  require __DIR__ . '/utilHTTP.php';
 
   $base_url = 'http://canciella.net/';
 
