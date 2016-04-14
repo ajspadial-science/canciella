@@ -82,6 +82,7 @@ if ($mime_type && $mime_type['full-type'] === 'text/html') {
     $script_code = str_replace("{{url}}", $url, $script_code);
     $script = $dom->createElement('script', $script_code);
     $script->setAttribute('type', 'application/javascript');
+    $script->setAttribute('data-canciella', 'new');
     $body->appendChild($script);
     $output = $dom->saveHTML();
 }
