@@ -88,4 +88,5 @@ if ($mime_type && $mime_type['full-type'] === 'text/html') {
 }
 
 $full_type = $mime_type['full-type'];
+header("Content-type: $full_type");
 echo $output;
