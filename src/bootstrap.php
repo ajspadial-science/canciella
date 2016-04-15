@@ -51,10 +51,6 @@ switch($routeInfo[0]) {
         $vars = $routeInfo[2];
         list($content, $content_type) = call_user_func_array($handler, $vars);
         break;
-    default:
-        $content = 'hola';
-        $content_type = 'text/html';
-        break;
 }
 
 function proxy($uri)
