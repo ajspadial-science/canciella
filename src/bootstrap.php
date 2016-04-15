@@ -25,7 +25,43 @@ $base_url = 'http://canciella.net/';
 $request = new \Http\HttpRequest($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
 $response = new \Http\HttpResponse;
 
-$url = ltrim($request->getUri(), '/');
+$dispatcher = \FastRoute\simpleDispatcher(function(\FastRoute\RouteCollector $r) {
+    $r->addRoute('GET', '/', function() {
+        return ['Welcome to canciella proxy', ['content-type' => 'text/html']];
+    });
+    $r->addRoute('GET', '/{url:.+}', function($url) {
+        return proxy($url);
+    });
+});
+
+$routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getPath());
+switch($routeInfo[0]) {
+    case \FastRoute\Dispatcher::NOT_FOUND:
+        $content = '404 error';
+        $header = ['content-type' => 'none'];
+        $response->setStatusCode(404);
+        break;
+    case \FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+        $content = '405 error';
+        $header = ['content-type' => 'none'];
+        $response->setStatusCode(405);
+        break;
+    case \FastRoute\Dispatcher::FOUND:
+        $handler = $routeInfo[1];
+        $vars = $routeInfo[2];
+        list($content, $content_type) = call_user_func_array($handler, $vars);
+        break;
+    default:
+        $content = 'hola';
+        $content_type = 'text/html';
+        break;
+}
+
+function proxy($uri)
+{
+global $base_url;
+
+$url = ltrim($uri, '/');
 $url = strpos($url, 'http://') !== false ? $url : 'http://' . $url;
 
 libxml_use_internal_errors(true);
@@ -50,9 +86,8 @@ if ($mime_type && $mime_type['full-type'] === 'text/html') {
         'meta'   => 'url',
     );
 
-    function appendProxy($href) 
+    function appendProxy($href, $base_url, $url)  
     {
-        global $url, $base_url;
         $parsed_href = parse_url($href);
 
         if (isset($parsed_href['scheme']) && isset($parsed_href['host'])) {
@@ -85,12 +120,12 @@ if ($mime_type && $mime_type['full-type'] === 'text/html') {
     }
 
     array_walk(
-        $tags, function($attributeName, $tagName) use ($dom) {
+        $tags, function($attributeName, $tagName) use ($dom, $base_url, $url) {
             $t = $dom->getElementsByTagName ($tagName);
             foreach($t as $element) {
                 $attr = $element->getAttribute($attributeName);
                 if (!empty($attr)) {
-                    $element->setAttribute($attributeName, appendProxy($attr));
+                    $element->setAttribute($attributeName, appendProxy($attr, $base_url, $url));
                     $element->setAttribute('data-canciella', 'modified');
                 }
             };
@@ -107,11 +142,16 @@ if ($mime_type && $mime_type['full-type'] === 'text/html') {
     $body->appendChild($script);
     $output = $dom->saveHTML();
 }
+if ($mime_type) {
+    return [$output, $mime_type['full-type']];
+} else {
+    return [$output, 'none'];
+}
+}
+$response->addHeader('Content-type', $content_type);
+$response->setContent($content);
 
-$response->addHeader('Content-type', $mime_type['full-type']);
-$response->setContent($output);
-
-foreach ($response->getHeaders() as $header) {
-    header($header, false);
+foreach ($response->getHeaders() as $h) {
+    header($h, false);
 }
 echo $response->getContent();
