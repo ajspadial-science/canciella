@@ -25,12 +25,13 @@ $base_url = 'http://canciella.net/';
 $request = new \Http\HttpRequest($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
 $response = new \Http\HttpResponse;
 
-$dispatcher = \FastRoute\simpleDispatcher(function(\FastRoute\RouteCollector $r) {
+$dispatcher = \FastRoute\simpleDispatcher(function(\FastRoute\RouteCollector $r) use ($base_url) {
     $r->addRoute('GET', '/', function() {
         return ['Welcome to canciella proxy', ['content-type' => 'text/html']];
     });
-    $r->addRoute('GET', '/{url:.+}', function($url) {
-        return proxy($url);
+    $r->addRoute('GET', '/{url:.+}', function($url) use ($base_url) {
+        $proxy = include('proxy.php');
+        return call_user_func($proxy, $url, $base_url);
     });
 });
 
