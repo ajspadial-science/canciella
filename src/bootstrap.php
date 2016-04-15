@@ -1,6 +1,24 @@
 <?php
 
+namespace Canciella;
+
+require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/utilHTTP.php';
+
+error_reporting(E_ALL);
+
+$environment = 'development';
+
+$whoops = new \Whoops\Run;
+if ($environment !== 'production') {
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+} else {
+    $whoops->pushHandler(function($e){
+        echo 'An error ocurred. Mail sent to developer.';
+        mail('antonio.sanchez@inia.es', 'Error canciella', $e);
+    });
+}
+$whoops->register();
 
 $base_url = 'http://canciella.net/';
 
