@@ -22,7 +22,10 @@ $whoops->register();
 
 $base_url = 'http://canciella.net/';
 
-$url = ltrim($_SERVER['REQUEST_URI'], '/');
+$request = new \Http\HttpRequest($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
+$response = new \Http\HttpResponse;
+
+$url = ltrim($request->getUri(), '/');
 $url = strpos($url, 'http://') !== false ? $url : 'http://' . $url;
 
 libxml_use_internal_errors(true);
@@ -105,6 +108,10 @@ if ($mime_type && $mime_type['full-type'] === 'text/html') {
     $output = $dom->saveHTML();
 }
 
-$full_type = $mime_type['full-type'];
-header("Content-type: $full_type");
-echo $output;
+$response->addHeader('Content-type', $mime_type['full-type']);
+$response->setContent($output);
+
+foreach ($response->getHeaders() as $header) {
+    header($header, false);
+}
+echo $response->getContent();

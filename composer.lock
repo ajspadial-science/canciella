@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f5b16b1ebb37092865c0737ebfac8af5",
-    "content-hash": "3ce8ea5e5822fbf7ac8b4f0c46ee6d17",
+    "hash": "41d4472956957d3476f5d63c031c1e4f",
+    "content-hash": "ec6eb01f1657ab838dfd6b03e881830f",
     "packages": [
         {
             "name": "filp/whoops",
@@ -66,6 +66,51 @@
                 "zf2"
             ],
             "time": "2016-04-07 06:16:25"
+        },
+        {
+            "name": "patricklouys/http",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PatrickLouys/http.git",
+                "reference": "d4acbd2838edfbe346ad0999fe55c9e8039e9b91"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PatrickLouys/http/zipball/d4acbd2838edfbe346ad0999fe55c9e8039e9b91",
+                "reference": "d4acbd2838edfbe346ad0999fe55c9e8039e9b91",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.0.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Http\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Patrick Louys",
+                    "email": "patrick@louys.ch",
+                    "role": "Creator / Main Developer"
+                }
+            ],
+            "description": "HTTP Component",
+            "keywords": [
+                "http",
+                "request",
+                "response"
+            ],
+            "time": "2015-11-10 16:45:39"
         }
     ],
     "packages-dev": [],
