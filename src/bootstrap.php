@@ -36,7 +36,7 @@ curl_close($curl);
 $output = $site_content;
 $mime_type = !$content_type ? null : parseMIME($content_type);
 if ($mime_type && $mime_type['full-type'] === 'text/html') {
-    $dom = new DOMDocument();
+    $dom = new \DOMDocument();
     $dom->loadHTML($site_content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
     $tags = array(
