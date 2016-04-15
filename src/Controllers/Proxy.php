@@ -3,6 +3,38 @@
 namespace Canciella\Controllers;
 
 class Proxy {
+
+    private function appendProxy($href, $base_url, $url)
+    {
+        $parsed_href = parse_url($href);
+        
+        if (isset($parsed_href['scheme']) && isset($parsed_href['host'])) {
+            // full html address
+            return "$base_url$href";
+        } else {
+            $parsed_url = parse_url($url);
+            $scheme = $parsed_url['scheme'] . "://";
+            $host = $parsed_url['host'];
+            $port = isset($parsed_url['port']) ? ":" . $parsed_url['port'] : "";
+            $base = "$scheme$host$port/";
+        
+            if (isset($parsed_url['path'])) {
+                $folder = strrpos($parsed_url['path'], '/') ? 
+                    substr($parsed_url['path'], 0, strrpos($parsed_url['path'], '/')) : 
+                    $parsed_url['path'];
+            } else {
+                $folder = "/";
+            }
+                  
+            if (strpos($href, "/") === 0) {
+                // absolute address in this domain
+                return "$base_url$base" . ltrim($href, "/");
+            } else {
+                // relative address in this domain
+                return "$base_url$base$folder/$href";
+            }
+        }
+    }
     
     public function processUri($uri, $base_url)
     {
@@ -31,46 +63,13 @@ class Proxy {
                 'meta'   => 'url',
             );
         
-            function appendProxy($href, $base_url, $url)  
-            {
-                $parsed_href = parse_url($href);
-        
-                if (isset($parsed_href['scheme']) && isset($parsed_href['host'])) {
-                    // full html address
-                    return "$base_url$href";
-                }
-                else {
-                    $parsed_url = parse_url($url);
-                    $scheme = $parsed_url['scheme'] . "://";
-                    $host = $parsed_url['host'];
-                    $port = isset($parsed_url['port']) ? ":" . $parsed_url['port'] : "";
-                    $base = "$scheme$host$port/";
-        
-                    if (isset($parsed_url['path'])) {
-                        $folder = strrpos($parsed_url['path'], '/') ? 
-                            substr($parsed_url['path'], 0, strrpos($parsed_url['path'], '/')) : 
-                            $parsed_url['path'];
-                    } else {
-                        $folder = "/";
-                    }
-                  
-                    if (strpos($href, "/") === 0) {
-                        // absolute address in this domain
-                        return "$base_url$base" . ltrim($href, "/");
-                    } else {
-                        // relative address in this domain
-                        return "$base_url$base$folder/$href";
-                    }
-                }
-            }
-
             array_walk(
                 $tags, function($attributeName, $tagName) use ($dom, $base_url, $url) {
                     $t = $dom->getElementsByTagName ($tagName);
                     foreach($t as $element) {
                         $attr = $element->getAttribute($attributeName);
                         if (!empty($attr)) {
-                            $element->setAttribute($attributeName, appendProxy($attr, $base_url, $url));
+                            $element->setAttribute($attributeName, $this->appendProxy($attr, $base_url, $url));
                             $element->setAttribute('data-canciella', 'modified');
                         }
                     };
