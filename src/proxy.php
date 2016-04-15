@@ -89,4 +89,4 @@ return function ($uri, $base_url)
     } else {
         return [$output, 'none'];
     }
-}
+};
