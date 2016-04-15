@@ -26,13 +26,8 @@ $request = new \Http\HttpRequest($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
 $response = new \Http\HttpResponse;
 
 $dispatcher = \FastRoute\simpleDispatcher(function(\FastRoute\RouteCollector $r) use ($base_url) {
-    $r->addRoute('GET', '/', function() {
-        return ['Welcome to canciella proxy', ['content-type' => 'text/html']];
-    });
-    $r->addRoute('GET', '/{url:.+}', function($url) use ($base_url) {
-        $proxy = include('proxy.php');
-        return call_user_func($proxy, $url, $base_url);
-    });
+    $r->addRoute('GET', '/', ['Canciella\Controllers\Main', 'show']);
+    $r->addRoute('GET', '/{url:.+}', ['Canciella\Controllers\Proxy', 'processUri']);
 });
 
 $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getPath());
@@ -48,9 +43,14 @@ switch($routeInfo[0]) {
         $response->setStatusCode(405);
         break;
     case \FastRoute\Dispatcher::FOUND:
-        $handler = $routeInfo[1];
+        $className = $routeInfo[1][0];
+        $method = $routeInfo[1][1];
         $vars = $routeInfo[2];
-        list($content, $content_type) = call_user_func_array($handler, $vars);
+
+        $class = new $className;
+        $params = array_values($vars);
+        $params[] = $base_url;
+        list($content, $content_type) = call_user_func_array([$class, $method], $params);
         break;
 }
 

@@ -1,7 +1,11 @@
 <?php
+
+namespace Canciella\Controllers;
+
+class Proxy {
     
-return function ($uri, $base_url)
-{
+    public function processUri($uri, $base_url)
+    {
     
     $url = ltrim($uri, '/');
     $url = strpos($url, 'http://') !== false ? $url : 'http://' . $url;
@@ -89,4 +93,6 @@ return function ($uri, $base_url)
     } else {
         return [$output, 'none'];
     }
-};
+}
+
+}
