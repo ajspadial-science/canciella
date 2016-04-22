@@ -4,6 +4,7 @@ namespace Canciella;
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/utilHTTP.php';
+require __DIR__ . '/config.php';
 
 error_reporting(E_ALL);
 
@@ -20,7 +21,7 @@ if ($environment !== 'production') {
 }
 $whoops->register();
 
-$base_url = 'http://canci.net/go/';
+$base_url = "$base_domain/go/";
 
 $request = new \Http\HttpRequest($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
 $response = new \Http\HttpResponse;
