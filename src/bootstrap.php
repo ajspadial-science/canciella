@@ -20,14 +20,15 @@ if ($environment !== 'production') {
 }
 $whoops->register();
 
-$base_url = 'http://canciella.net/';
+$base_url = 'http://canci.net/go/';
 
 $request = new \Http\HttpRequest($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
 $response = new \Http\HttpResponse;
 
+
 $dispatcher = \FastRoute\simpleDispatcher(function(\FastRoute\RouteCollector $r) use ($base_url) {
     $r->addRoute('GET', '/', ['Canciella\Controllers\Main', 'show']);
-    $r->addRoute('GET', '/{url:.+}', ['Canciella\Controllers\Proxy', 'processUri']);
+    $r->addRoute('GET', '/go/{url:.+}', ['Canciella\Controllers\Proxy', 'processUri']);
 });
 
 $routeInfo = $dispatcher->dispatch($request->getMethod(), $request->getPath());
@@ -50,6 +51,7 @@ switch($routeInfo[0]) {
         $class = new $className;
         $params = array_values($vars);
         $params[] = $base_url;
+        $params[0] .= '?' . $request->getQueryString();
         list($content, $content_type) = call_user_func_array([$class, $method], $params);
         break;
 }
