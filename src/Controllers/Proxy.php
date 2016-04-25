@@ -61,6 +61,7 @@ class Proxy {
                 'a'      => 'href',
                 'img'    => 'src',
                 'meta'   => 'url',
+                'iframe' => 'src',
             );
         
             array_walk(
