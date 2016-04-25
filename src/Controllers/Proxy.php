@@ -7,6 +7,7 @@ class Proxy {
     private function appendProxy($href, $base_url, $url)
     {
         $parsed_href = parse_url($href);
+        $href = urldecode($href);
         
         if (isset($parsed_href['scheme']) && isset($parsed_href['host'])) {
             // full html address
