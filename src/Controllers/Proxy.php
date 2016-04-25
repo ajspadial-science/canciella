@@ -45,6 +45,7 @@ class Proxy {
         
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         $site_content = curl_exec($curl);
         $content_type = trim(curl_getinfo($curl, CURLINFO_CONTENT_TYPE));
         curl_close($curl);
