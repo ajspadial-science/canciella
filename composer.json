@@ -20,5 +20,8 @@
     "psr-4": {
       "Canciella\\": "src/"
     }
+  },
+  "require-dev": {
+    "behat/behat": "^3.1"
   }
 }
