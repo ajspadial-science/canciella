@@ -13,6 +13,7 @@ class Proxy {
         'img'    => 'src',
         'meta'   => 'url',
         'iframe' => 'src',
+        'form' => 'action',
     );
 
     private function appendProxy($href, $base_url, $url)
