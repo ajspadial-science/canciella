@@ -16,6 +16,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private $base_url;
     private $output;
+    private $session;
+
     /**
      * Initializes context.
      *
@@ -86,7 +88,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function obtengoUnArticuloEnFormatoPdf()
     {
-        throw new PendingException();
+        $content_type = $this->session->getresponseheaders()['Content-Type'][0];
+        if ($content_type !== 'application/pdf') { 
+            throw new exception("el artículo '$arg2' de la revista '$arg1' no es accesible a través del proxy.");
+        }
     }
 
     /**
@@ -106,10 +111,31 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given que la revista Springer :arg1 tiene un artículo :arg2
+     * @When pongo :arg1 en el cajón Buscar de la revista Springer :arg2
      */
-    public function queLaRevistaSpringerTieneUnArticulo($arg1, $arg2)
+    public function pongoEnElCajonBuscarDeLaRevistaSpringer($arg1, $arg2)
     {
-        throw new PendingException();
+        $driver = new \Behat\Mink\Driver\GoutteDriver();
+        $this->session = new \Behat\Mink\Session($driver);
+        $this->session->start();
+
+        $journal_Springer = Journal::getJournalByName($arg2);
+        $this->session->visit("$this->base_url/go/$journal_Springer->website");
+        $front_page = $this->session->getPage();
+        $search_within = $front_page->find('css', 'form.searchWithinForm input.search-within');
+        $search_within_button = $front_page->find('css', 'form.searchWithinForm input.search-submit');
+        $search_within->setValue($arg1);
+        $search_within_button->click();
+    }
+
+    /**
+     * @When hago clic en primer enlace del resultado de busqueda en revista Springer
+     */
+    public function hagoClicEnPrimerEnlaceDelResultadoDeBusquedaEnRevistaSpringer()
+    {
+        $search_result_page = $this->session->getPage();
+        $article_link = $search_result_page->find('css', 'ol#results-list li h2 a');
+        $pdf_link = $search_result_page->find('css', 'ol#results-list li div.actions span a.pdf-link');
+        $pdf_link->click();
     }
 }
