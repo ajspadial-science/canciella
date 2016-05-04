@@ -104,4 +104,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         throw new PendingException();
     }
+
+    /**
+     * @Given que la revista Springer :arg1 tiene un artículo :arg2
+     */
+    public function queLaRevistaSpringerTieneUnArticulo($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
 }
