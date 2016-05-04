@@ -6,11 +6,16 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 
+use Canciella\Journal;
+
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context, SnippetAcceptingContext
 {
+
+    private $base_url;
+    private $output;
     /**
      * Initializes context.
      *
@@ -20,6 +25,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct()
     {
+        include __DIR__ . '/../../src/config.php';
+        $this->base_url = $base_domain;
     }
 
     /**
@@ -27,7 +34,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function navegoALaRevistaATravesDelProxy($arg1)
     {
-        throw new PendingException();
+        $j = Journal::getJournalByName($arg1);
+        $uri = $j->website;
+        
+        $p = new \Canciella\Controllers\Proxy();
+        $this->output = $p->processUri($uri, $this->base_url)[0]; 
     }
 
     /**
@@ -35,7 +46,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function todosLosEnlacesDevueltosAccedenATravesDelProxy()
     {
-        throw new PendingException();
+       $proxy = new \Canciella\Controllers\Proxy();
+       $proxy->initDOM($this->output);
+       $proxy->linkableElements_walk(
+           function($element, $attribute_name, $attribute) {
+               if (!empty($attribute) && strpos($attribute, $this->base_url) !== 0) {
+                   throw new Exception("Proxy not used in element {$element->C14N()}");
+               }
+           }
+       );
     }
 
     /**
