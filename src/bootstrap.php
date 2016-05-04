@@ -3,7 +3,6 @@
 namespace Canciella;
 
 require __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . '/utilHTTP.php';
 require __DIR__ . '/config.php';
 
 error_reporting(E_ALL);
