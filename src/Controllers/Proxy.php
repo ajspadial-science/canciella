@@ -16,11 +16,14 @@ class Proxy {
         'form' => 'action',
     );
 
-    private function appendProxy($href, $base_url, $url)
+    public function appendProxy($href, $base_url, $url)
     {
         $parsed_href = parse_url($href);
         $href = urldecode($href);
         
+        if (strpos($href, '//') === 0) {
+            return "{$base_url}http:$href";
+        }
         if (isset($parsed_href['scheme']) && isset($parsed_href['host'])) {
             // full html address
             return "$base_url$href";
@@ -33,7 +36,7 @@ class Proxy {
         
             if (isset($parsed_url['path'])) {
                 $folder = strrpos($parsed_url['path'], '/') ? 
-                    substr($parsed_url['path'], 0, strrpos($parsed_url['path'], '/')) : 
+                    substr($parsed_url['path'], 1, strrpos($parsed_url['path'], '/')) : 
                     $parsed_url['path'];
             } else {
                 $folder = "/";
@@ -44,7 +47,7 @@ class Proxy {
                 return "$base_url$base" . ltrim($href, "/");
             } else {
                 // relative address in this domain
-                return "$base_url$base$folder/$href";
+                return "$base_url$base$folder$href";
             }
         }
     }
@@ -76,7 +79,6 @@ class Proxy {
                 }
             );
 
-        
             $body = $this->dom->getElementsByTagName('body')->item(0);
             $script_template = file_get_contents(__DIR__ . '/../../templates/canciella.js');
             $script_code = str_replace("{{base_url}}", $base_url, $script_template);
