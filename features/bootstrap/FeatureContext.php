@@ -28,7 +28,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function __construct()
     {
         include __DIR__ . '/../../src/config.php';
-        $this->base_url = $base_domain;
+        $this->base_url = "$base_domain/go/";
     }
 
     /**
@@ -120,7 +120,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->session->start();
 
         $journal_Springer = Journal::getJournalByName($arg2);
-        $this->session->visit("$this->base_url/go/$journal_Springer->website");
+        $this->session->visit("$this->base_url$journal_Springer->website");
         $front_page = $this->session->getPage();
         $search_within = $front_page->find('css', 'form.searchWithinForm input.search-within');
         $search_within_button = $front_page->find('css', 'form.searchWithinForm input.search-submit');
