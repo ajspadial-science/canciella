@@ -57,6 +57,7 @@ switch($routeInfo[0]) {
 }
 
 $response->addHeader('Content-type', $content_type);
+$response->addHeader('Access-Control-Allow-Origin', '*');
 $response->setContent($content);
 
 foreach ($response->getHeaders() as $h) {
