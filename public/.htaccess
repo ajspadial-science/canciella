@@ -1,6 +1,0 @@
-RewriteEngine on
-
-RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_URI} !-f
-RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_URI} !-d
-RewriteRule ^go/.*$ index.php [QSA,L]
-
