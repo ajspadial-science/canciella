@@ -1,0 +1,15 @@
+<VirtualHost *:8800>
+  ServerName canciella.net
+  ServerAlias *.canciella.net
+
+  RewriteEngine On
+
+  RewriteCond ${SERVER_PROTOCOL} ^http$
+  RewriteCond %{HTTP_HOST} ^(.*).canciella.net$
+  RewriteRule ^(.*)$ http://%1:80/$0 [P]
+
+  RewriteCond ${SERVER_PROTOCOL} ^https$
+  RewriteCond %{HTTP_HOST} ^(.*).canciella.net$
+  RewriteRule ^(.*)$ https://%1:80/$0 [P]
+
+</VirtualHost>
