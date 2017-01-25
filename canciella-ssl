@@ -1,0 +1,27 @@
+Listen 443
+
+NameVirtualHost *:443
+
+<VirtualHost *:443>
+  ServerName canciella.net
+  ServerAlias *.canciella.net
+
+  RewriteEngine On
+  ProxyPassInterpolateEnv On
+  SSlEngine On
+		
+  #   A self-signed (snakeoil) certificate can be created by installing
+  #   the ssl-cert package. See
+  #   /usr/share/doc/apache2/README.Debian.gz for more info.
+  #   If both key and certificate are stored in the same file, only the
+  #   SSLCertificateFile directive is needed.
+  SSLCertificateFile	/etc/ssl/certs/ssl-cert-snakeoil.pem
+  SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+
+#  RewriteCond %{HTTPS} on
+  RewriteCond %{HTTP_HOST} ^(.*).canciella.net$
+  RewriteRule ^(.*)$ https://%1/$0 [P,E=HOST:%1,E=PROTOCOL:https]
+
+  ProxyPassReverse / $PROTOCOL://%1 interpolate
+
+</VirtualHost>
