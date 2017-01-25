@@ -1,15 +1,18 @@
-<VirtualHost *:8800>
+<VirtualHost *:*>
   ServerName canciella.net
   ServerAlias *.canciella.net
 
   RewriteEngine On
+  ProxyPassInterpolateEnv On
 
-  RewriteCond ${SERVER_PROTOCOL} ^http$
+  RewriteCond %{HTTPS} off
   RewriteCond %{HTTP_HOST} ^(.*).canciella.net$
-  RewriteRule ^(.*)$ http://%1:80/$0 [P]
+  RewriteRule ^(.*)$ http://%1/$0 [P,E=HOST:%1,E=PROTOCOL:http]
 
-  RewriteCond ${SERVER_PROTOCOL} ^https$
+  RewriteCond %{HTTPS} on
   RewriteCond %{HTTP_HOST} ^(.*).canciella.net$
-  RewriteRule ^(.*)$ https://%1:80/$0 [P]
+  RewriteRule ^(.*)$ https://%1/$0 [P,E=HOST:%1,E=PROTOCOL:https]
+
+  ProxyPassReverse / $PROTOCOL://%1 interpolate
 
 </VirtualHost>
