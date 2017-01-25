@@ -1,4 +1,4 @@
-<VirtualHost *:*>
+<VirtualHost *:80>
   ServerName canciella.net
   ServerAlias *.canciella.net
 
